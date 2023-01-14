@@ -1,5 +1,4 @@
 const bodypage = document.getElementById('bodypage');
-const textprint = document.getElementById('text');
 const nMordidas = document.getElementById('NMordidas');
 const nPresas = document.getElementById('NPresas');
 const textlog = document.getElementById('textlog');
@@ -7,6 +6,7 @@ const mycanvas = document.querySelector('canvas');
 const gamerconfig = document.getElementById('gamerconfig');
 const gamerplay = document.getElementById('gamerplay');
 const biniciar = document.getElementById('Iniciar');
+const biniciarfs = document.getElementById('IniciarFS');
 const Saveps = document.getElementById('Saveps');
 const nmord = document.getElementById('NM');
 const npres = document.getElementById('NP');
@@ -28,7 +28,14 @@ const music = new Audio("./assets/jigsaw-puzzle-background.mp3");
 music.volume = Vmusic.value;
 efectsong.volume = Vefect.value;
 oversong.volume = Vefect.value;
-
+if (screen.width < 800 && screen.height < 800){
+    mycanvas.height = 360;
+    mycanvas.width = 640;
+}
+if (screen.height > screen.width) {
+    mycanvas.height = 640;
+    mycanvas.width = 360;
+}
 let c = mycanvas.getContext('2d');
 let paused = true;
 let nbol = npres.value;
@@ -67,6 +74,7 @@ function setCookieTime() {
   let expires = "expires="+d.toUTCString();
   document.cookie = 'boldarwintime' + "=" + timegamemax + ";" + expires + ";path=/";
 }
+
 if (document.cookie.indexOf('boldarwintime')>=0){
     timegamemax = JSON.parse(document.cookie.split("; ").find((row) => row.startsWith('boldarwintime='))?.split("=")[1])
     ltimemax.innerHTML = timegamemax;
@@ -112,7 +120,6 @@ Saveps.addEventListener('click', function(){
   preset.blue = colorrgb[2].value;
   document.cookie = 'boldarwinpreset' + "=" + JSON.stringify(preset) + ";" + expires + ";path=/";
 })
-
 
 function changeColor(){
   let red = Math.floor(Math.random()*255);
@@ -289,6 +296,7 @@ async function pastime(){
             textlog.scrollTop = textlog.scrollHeight;
             music.pause();
             oversong.play();
+            document.exitFullscreen();
             if (timegame > timegamemax){
                 timegamemax = timegame;
                 ltimemax.innerHTML = timegamemax;
@@ -302,6 +310,7 @@ async function pastime(){
             textlog.scrollTop = textlog.scrollHeight;
             music.pause();
             oversong.play();
+            document.exitFullscreen();
             if (timegame > timegamemax){
                 timegamemax = timegame;
                 ltimemax.innerHTML = timegamemax;
@@ -315,6 +324,7 @@ async function pastime(){
             textlog.scrollTop = textlog.scrollHeight;
             music.pause();
             oversong.play();
+            document.exitFullscreen();
             if (timegame > timegamemax){
                 timegamemax = timegame;
                 setCookieTime();
@@ -339,8 +349,7 @@ async function pastime(){
         }
     },1000); 
 }
-
-biniciar.addEventListener("click", function(){
+function iniciargame(){
     gamerconfig.style.display = "none";
     gamerplay.style.display = "flex";
     pinicio();
@@ -349,6 +358,13 @@ biniciar.addEventListener("click", function(){
     pastime();
     changeNewColor();
     untouch();
+}
+biniciar.addEventListener("click", function(){
+    iniciargame();
+});
+biniciarfs.addEventListener("click", function(){
+    enterfullscreem();
+    iniciargame();
 });
 bRestart.addEventListener("click", function(){
     gamerconfig.style.display = "flex";
@@ -391,15 +407,14 @@ Vefect.addEventListener('change', function(){
 
 mycanvas.addEventListener('mouseup',clicar,true);
 
-function untouch() {
-    touchbox.addEventListener("touchstart", onTouch, false);
-    touchbox.addEventListener("touchend", onTouch, false);
-    touchbox.addEventListener("touchcancel", onTouch, false);
-    touchbox.addEventListener("touchleave", onTouch, false);
-    touchbox.addEventListener("touchmove", onTouch, false);
-  }
-function onTouch(evt) {
-    evt.preventDefault();
-    if (evt.touches.length > 1 || (evt.type == "touchend" && evt.touches.length > 0))
-      return;
+function enterfullscreem(){
+    if (mycanvas.requestFullscreen){
+        mycanvas.requestFullscreen();
+    }
+    else if (mycanvas.msRequestFullscreen){
+        mycanvas.msRequestFullscreen();
+    }
+    else if (mycanvas.mozRequestFullScreen){
+        mycanvas.mozRequestFullScreen();
+    }
 }
